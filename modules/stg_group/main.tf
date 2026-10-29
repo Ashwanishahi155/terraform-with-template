@@ -13,5 +13,5 @@ resource "azurerm_storage_account" "stg" {
   allow_nested_items_to_be_public = false
 
   tags = {}
-    
+
 }
