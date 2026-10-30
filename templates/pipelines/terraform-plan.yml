@@ -1,0 +1,42 @@
+
+parameters:
+  - name: environment
+    type: string
+
+  - name: serviceConnection
+    type: string
+
+  - name: variableFile
+    type: string
+
+  - name: stateKey
+    type: string
+
+steps:
+
+  # Step 1: Initialize Terraform with remote backend
+  - task: TerraformTask@5
+    displayName: Terraform Init
+    inputs:
+      provider: azurerm
+      command: init
+      workingDirectory: '$(System.DefaultWorkingDirectory)/environments/${{ parameters.environment }}'
+
+      backendServiceArm: '${{ parameters.serviceConnection }}'
+      backendAzureRmResourceGroupName: 'rg-terraform-state'
+      backendAzureRmStorageAccountName: 'ashwanitfstate2026test'
+      backendAzureRmContainerName: 'tfstate'
+      backendAzureRmKey: '${{ parameters.stateKey }}'
+
+  # Step 2: Generate Terraform Plan
+  - task: TerraformTask@5
+    displayName: Terraform Plan
+    inputs:
+      provider: azurerm
+      command: plan
+
+      workingDirectory: '$(System.DefaultWorkingDirectory)/environments/${{ parameters.environment }}'
+
+      environmentServiceNameAzureRM: '${{ parameters.serviceConnection }}'
+
+      commandOptions: '-var-file=${{ parameters.variableFile }} -input=false'
