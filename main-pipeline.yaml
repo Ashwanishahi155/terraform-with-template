@@ -1,35 +1,22 @@
-
-# Pipeline ko manually run karenge
 trigger: none
 
-# Apna self-hosted agent pool
 pool:
   name: terraform-agent-pool
 
-# Run karte waqt environment select karna
 parameters:
-  - name: environment
-    displayName: Select Environment
-    type: string
-    default: dev
-    values:
-      - dev
-      - prod
+- name: environment
+  displayName: Select Environment
+  type: string
+  default: dev
+  values:
+  - dev
+  - prod
 
-# Terraform Plan stage
 stages:
-  - stage: TerraformPlan
-    displayName: Terraform Plan
-
-    jobs:
-      - job: Plan
-        displayName: Run Terraform Plan
-
-        steps:
-          # Reusable Terraform Plan template call
-          - template: templates/pipelines/terraform-plan.yml
-            parameters:
-              environment: ${{ parameters.environment }}
-              serviceConnection: octspn
-              variableFile: '${{ parameters.environment }}.tfvars'
-              stateKey: '${{ parameters.environment }}/terraform.tfstate'
+- stage: Test
+  jobs:
+  - job: TestTemplate
+    steps:
+    - template: templates/pipelines/terraform-plan.yml
+      parameters:
+        environment: ${{ parameters.environment }}
